@@ -4,29 +4,30 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import saucedemo.model.User;
 import saucedemo.page.LoginPage;
 import saucedemo.page.ProductPage;
+import saucedemo.service.UserCreator;
 
 public class LoginTest extends BaseTest {
 
     private LoginPage loginPage;
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     protected void initPage() {
         loginPage = new LoginPage(driver);
     }
 
-    @Test(description = "Successful Login should open Products page")
+    @Test(groups = "smoke", description = "Successful Login should open Products page")
     public void shouldLoginSuccessfullyWithValidUsernameAndPassword(){
         // Given
-        String username = "standard_user";
-        String password = "secret_sauce";
+        User user = UserCreator.standardUser();
         String expected = "Products";
 
         // When
         loginPage.openPage();
-        loginPage.typeUsername(username);
-        loginPage.typePassword(password);
+        loginPage.typeUsername(user.username());
+        loginPage.typePassword(user.password());
         ProductPage productPage = loginPage.successfulLogin();
 
         // Then
@@ -35,18 +36,15 @@ public class LoginTest extends BaseTest {
     }
 
     @Test(
+            groups = "regression",
             dataProvider = "invalidLoginData",
             description = "Unsuccessful Login should show error message"
     )
-    public void shouldShowErrorMessageForInvalidUsernameAndPassword(
-            String username,
-            String password,
-            String expectedMessage
-    ){
+    public void shouldShowErrorMessageForInvalidUsernameAndPassword(User user, String expectedMessage){
         // When
         loginPage.openPage();
-        loginPage.typeUsername(username);
-        loginPage.typePassword(password);
+        loginPage.typeUsername(user.username());
+        loginPage.typePassword(user.password());
         String actualMessage = loginPage.unsuccessfulLogin();
 
         // Then
@@ -56,13 +54,13 @@ public class LoginTest extends BaseTest {
     @DataProvider(name = "invalidLoginData")
     private Object[][] invalidLoginData() {
         return new Object[][]{
-                {"standard_user", "wrong_password", "Epic sadface: Username and password do not match any user in this service"},
-                {"wrong_user", "secret_sauce", "Epic sadface: Username and password do not match any user in this service"},
-                {"wrong_user", "wrong_password", "Epic sadface: Username and password do not match any user in this service"},
-                {"", "secret_sauce", "Epic sadface: Username is required"},
-                {"standard_user", "", "Epic sadface: Password is required"},
-                {"", "", "Epic sadface: Username is required"},
-                {"locked_out_user", "secret_sauce", "Epic sadface: Sorry, this user has been locked out."}
+                {UserCreator.standardUserWithWrongPassword(), "Epic sadface: Username and password do not match any user in this service"},
+                {UserCreator.wrongUserWithCorrectPassword(), "Epic sadface: Username and password do not match any user in this service"},
+                {UserCreator.invalidUser(), "Epic sadface: Username and password do not match any user in this service"},
+                {UserCreator.withEmptyUsername(), "Epic sadface: Username is required"},
+                {UserCreator.withEmptyPassword(), "Epic sadface: Password is required"},
+                {UserCreator.withEmptyUsernameAndPassword(), "Epic sadface: Username is required"},
+                {UserCreator.lockedOutUser(), "Epic sadface: Sorry, this user has been locked out."}
         };
     }
 }

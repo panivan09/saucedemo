@@ -3,37 +3,35 @@ package saucedemo.test;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import saucedemo.model.UserInformation;
 import saucedemo.page.*;
+import saucedemo.service.UserCreator;
+import saucedemo.service.UserInformationCreator;
 
 import java.util.List;
 
 public class ProductTest extends BaseTest{
 
-    private static final String STANDARD_USER = "standard_user";
-    private static final String PASSWORD_FOR_STANDARD_USER = "secret_sauce";
-
     private ProductPage productPage;
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     protected void initPage() {
         LoginPage loginPage = new LoginPage(driver);
         loginPage.openPage();
-        productPage = loginPage.loginAs(STANDARD_USER, PASSWORD_FOR_STANDARD_USER);
+        productPage = loginPage.loginAs(UserCreator.standardUser());
     }
 
-    @Test(description = "Add item to cart, checkout, and complete order")
+    @Test(groups = "smoke", description = "Add item to cart, checkout, and complete order")
     public void shouldAddSingleItemToCartAndCompletePurchaseSuccessfully() {
         // Given
-        String firstName = "John";
-        String lastName = "Doe";
-        String postCode = "12345";
+        UserInformation userInformation = UserInformationCreator.validUserInformation();
         String expected = "Thank you for your order!";
 
         // When
         productPage.addBackpackToCart();
         CartPage cartPage = productPage.openCartPage();
         CheckoutStepOnePage checkoutStepOnePage = cartPage.clickOnCheckoutButtonAndOpenCheckoutStepOnePage();
-        checkoutStepOnePage.fillUserInformation(firstName, lastName, postCode);
+        checkoutStepOnePage.fillUserInformation(userInformation);
         CheckoutStepTwoPage checkoutStepTwoPage = checkoutStepOnePage.clickOnContinueButtonAndOpenCheckoutStepTwoPage();
         CheckoutCompletePage checkoutCompletePage = checkoutStepTwoPage.clickOnFinishButtonAndOpenCheckoutCompletePage();
         String actual = checkoutCompletePage.getCompletedHeaderText();
@@ -42,7 +40,7 @@ public class ProductTest extends BaseTest{
         Assert.assertEquals(actual, expected);
     }
 
-    @Test(description = "Should sort product items alphabetically (A to Z) by name")
+    @Test(groups = "regression", description = "Should sort product items alphabetically (A to Z) by name")
     public void shouldSortProductsByNameFromAToZ() {
         // Given
         String sortOption = "az";
@@ -63,7 +61,7 @@ public class ProductTest extends BaseTest{
         Assert.assertEquals(actual, expected, "Items are not sorted A to Z");
     }
 
-    @Test(description = "Should sort product items alphabetically (Z to A) by name")
+    @Test(groups = "regression", description = "Should sort product items alphabetically (Z to A) by name")
     public void shouldSortProductsByNameFromZToA() {
         // Given
         String sortOption = "za";
@@ -84,7 +82,7 @@ public class ProductTest extends BaseTest{
         Assert.assertEquals(actual, expected, "Items are not sorted Z to A");
     }
 
-    @Test(description = "Should sort product items by price (low to high)")
+    @Test(groups = "regression", description = "Should sort product items by price (low to high)")
     public void shouldSortProductsByPriceLowToHigh() {
         // Given
         String sortOption = "lohi";
@@ -98,7 +96,7 @@ public class ProductTest extends BaseTest{
         Assert.assertEquals(actual, expected, "Prices are not sorted low to high");
     }
 
-    @Test(description = "Should sort product items by price (high to low)")
+    @Test(groups = "regression", description = "Should sort product items by price (high to low)")
     public void shouldSortProductsByPriceHighToLow() {
         // Given
         String sortOption = "hilo";
@@ -112,7 +110,7 @@ public class ProductTest extends BaseTest{
         Assert.assertEquals(actual, expected, "Prices are not sorted high to low");
     }
 
-    @Test(description = "Logout should return user to Login page")
+    @Test(groups = "smoke", description = "Logout should return user to Login page")
     public void shouldLogoutSuccessfully() {
         // Given
         String expected = "Login";

@@ -1,5 +1,7 @@
 package saucedemo.page;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -11,6 +13,8 @@ import java.time.Duration;
 import java.util.List;
 
 public class ProductPage extends BasePage{
+
+    private static final Logger logger = LogManager.getLogger(ProductPage.class);
 
     private static final Duration WAIT_TIMEOUT = Duration.ofSeconds(10);
 
@@ -58,10 +62,12 @@ public class ProductPage extends BasePage{
 
     public void addBackpackToCart() {
         clickOnElementWhenClickable(addBackpackToCartButton);
+        logger.info("Add item to cart: Sauce Labs Backpack");
     }
 
     public CartPage openCartPage() {
         clickOnElementWhenClickable(cartButton);
+        logger.info("Open Cart page");
 
         return new CartPage(driver);
     }
@@ -69,39 +75,51 @@ public class ProductPage extends BasePage{
     public String getPageTitleName() {
         new WebDriverWait(driver, WAIT_TIMEOUT)
                 .until(ExpectedConditions.visibilityOf(pageTitle));
+        String title = pageTitle.getText();
+        logger.debug("Products page title: {}", title);
 
-        return pageTitle.getText();
+        return title;
     }
 
     public void openSortDropdownButtonAndClickOnChosenSortOption(String option) {
         waitUntilElementVisible(sortDropdownButton);
         Select options = new Select(sortDropdownButton);
         options.selectByValue(option);
+        logger.info("Choose sort option: {} in sort menu", option);
     }
 
     public List<String> getItemNames() {
-        return itemNames.stream()
+        List<String> names = itemNames.stream()
                 .map(WebElement::getText)
                 .toList();
+        logger.debug("Items names count: {}", names.size());
+
+        return names;
     }
 
     public List<Double> getItemPrices() {
-        return itemPrices.stream()
+        List<Double> prices = itemPrices.stream()
                 .map(WebElement::getText)
                 .map(text -> text.replace("$", ""))
                 .map(Double::parseDouble)
                 .toList();
+        logger.debug("Items prices count: {}", prices.size());
+
+        return prices;
     }
 
     public void addThreeItemsToCart() {
         clickOnElementWhenClickable(addBikeLightToCartButton);
         clickOnElementWhenClickable(addBoltTshirtToCartButton);
         clickOnElementWhenClickable(addLabsOnesieToCartButton);
+        logger.debug("Added three items to Cart: {}, {}, {}", "Bike Light", "Bolt Tshirt", "Labs Onesie");
     }
 
     public LoginPage clickOnLogoutButtonAndShowLoginPage() {
         clickOnElementWhenClickable(burgerMenuButton);
+        logger.debug("Burger menu opened");
         clickOnElementWhenClickable(logoutButton);
+        logger.info("Logout clicked and Login page opened");
 
         return new LoginPage(driver);
     }

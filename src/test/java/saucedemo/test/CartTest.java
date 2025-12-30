@@ -6,24 +6,25 @@ import org.testng.annotations.Test;
 import saucedemo.page.CartPage;
 import saucedemo.page.LoginPage;
 import saucedemo.page.ProductPage;
+import saucedemo.service.UserCreator;
 
 import java.util.List;
 
 public class CartTest extends BaseTest{
 
-    private static final String STANDARD_USER = "standard_user";
-    private static final String PASSWORD_FOR_STANDARD_USER = "secret_sauce";
-
     private ProductPage productPage;
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     protected void initPage() {
         LoginPage loginPage = new LoginPage(driver);
         loginPage.openPage();
-        productPage = loginPage.loginAs(STANDARD_USER, PASSWORD_FOR_STANDARD_USER);
+        productPage = loginPage.loginAs(UserCreator.standardUser());
     }
 
-    @Test(description = "Cart should keep 1 item after removing 2 of 3 and return to ProductsPage on Continue Shopping")
+    @Test(
+            groups = "regression",
+            description = "Cart should keep 1 item after removing 2 of 3 and return to ProductsPage on Continue Shopping"
+    )
     public void shouldRemoveTwoItemsFromCartAndContinueShopping() {
         // Given
         int expectedNumberOfCartItem = 1;

@@ -1,34 +1,25 @@
 package saucedemo.test;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Listeners;
+import saucedemo.driver.DriverManager;
+import saucedemo.utils.TestListener;
 
-import java.util.Map;
 
+@Listeners(TestListener.class)
 public abstract class BaseTest {
 
     protected WebDriver driver;
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     protected void setUp() {
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--incognito");
-        options.setExperimentalOption("prefs", Map.of(
-                "credentials_enable_service", false,
-                "profile.password_manager_enabled", false
-        ));
-
-        driver = new ChromeDriver(options);
-        driver.manage().window().maximize();
+        driver = DriverManager.getDriver();
     }
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     protected void tearDown() {
-        if (driver != null) {
-        driver.quit();
-        }
+        DriverManager.closeDriver();
     }
 }
