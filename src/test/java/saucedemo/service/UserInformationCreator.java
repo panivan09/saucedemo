@@ -15,13 +15,16 @@ public class UserInformationCreator {
     private UserInformationCreator() {}
 
     public static UserInformation validUserInformation() {
-        String first = TestDataReader.getTestData(FIRST_NAME);
-        String last = TestDataReader.getTestData(LAST_NAME);
-        String postal = TestDataReader.getTestData(POSTAL_CODE);
+        String firstName = TestDataReader.getTestData(FIRST_NAME);
+        String lastName = TestDataReader.getTestData(LAST_NAME);
+        String postalCode = TestDataReader.getTestData(POSTAL_CODE);
 
-        logger.debug("Create user info: firstName='{}', lastName='{}', postalCode='{}'", first, last, postal);
+        logger.debug("Create user info: firstName='{}', lastName='{}', postalCode='{}'", firstName, lastName, postalCode);
 
-        return new UserInformation(first, last, postal);
-
+        return UserInformation.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .postalCode(postalCode)
+                .build();
     }
 }

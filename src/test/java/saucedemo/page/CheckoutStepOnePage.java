@@ -42,8 +42,8 @@ public class CheckoutStepOnePage extends BasePage{
 
         waitUntilElementVisible(lastNameInput);
         lastNameInput.clear();
-        lastNameInput.sendKeys(userInformation.lastname());
-        logger.debug("Last name: {}", userInformation.lastname());
+        lastNameInput.sendKeys(userInformation.lastName());
+        logger.debug("Last name: {}", userInformation.lastName());
 
         waitUntilElementVisible(postalCodeInput);
         postalCodeInput.clear();

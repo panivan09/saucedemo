@@ -16,8 +16,6 @@ public class ProductPage extends BasePage{
 
     private static final Logger logger = LogManager.getLogger(ProductPage.class);
 
-    private static final Duration WAIT_TIMEOUT = Duration.ofSeconds(10);
-
     @FindBy(css = "[data-test='title']")
     private WebElement pageTitle;
 
@@ -73,8 +71,7 @@ public class ProductPage extends BasePage{
     }
 
     public String getPageTitleName() {
-        new WebDriverWait(driver, WAIT_TIMEOUT)
-                .until(ExpectedConditions.visibilityOf(pageTitle));
+        waitUntilElementVisible(pageTitle);
         String title = pageTitle.getText();
         logger.debug("Products page title: {}", title);
 

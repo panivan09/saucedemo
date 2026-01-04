@@ -5,19 +5,15 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import saucedemo.model.User;
 import saucedemo.service.TestDataReader;
 
-import java.time.Duration;
 
 public class LoginPage extends BasePage{
 
     private static final Logger logger = LogManager.getLogger(LoginPage.class);
 
     private static final String BASE_URL = "testdata.baseUrl";
-    private static final Duration WAIT_TIMEOUT = Duration.ofSeconds(10);
     private static final String LOGIN_BUTTON_VALUE = "value";
 
     @FindBy(id = "user-name")
@@ -39,8 +35,7 @@ public class LoginPage extends BasePage{
     @Override
     public void openPage() {
         driver.get(TestDataReader.getTestData(BASE_URL));
-        new WebDriverWait(driver, WAIT_TIMEOUT)
-                .until(ExpectedConditions.visibilityOf(usernameInput));
+        waitUntilElementVisible(usernameInput);
         logger.info("Login page opened: {}", TestDataReader.getTestData(BASE_URL));
     }
 
@@ -61,16 +56,17 @@ public class LoginPage extends BasePage{
     }
 
     public ProductPage successfulLogin() {
-        clickOnLoginButton();
+        logger.info("Click Login button");
+        clickOnElementWhenClickable(loginButton);
         logger.info("Product page opened");
 
         return new ProductPage(driver);
     }
 
     public String unsuccessfulLogin() {
-        clickOnLoginButton();
-        new WebDriverWait(driver, WAIT_TIMEOUT)
-                .until(ExpectedConditions.visibilityOf(errorLoginMessage));
+        logger.info("Click Login button");
+        clickOnElementWhenClickable(loginButton);
+        waitUntilElementVisible(errorLoginMessage);
         String message = errorLoginMessage.getText();
         logger.warn("Login failed. Message: {}", message);
 
@@ -89,12 +85,5 @@ public class LoginPage extends BasePage{
         waitUntilElementVisible(loginButton);
 
         return loginButton.getAttribute(LOGIN_BUTTON_VALUE);
-    }
-
-    private void clickOnLoginButton() {
-        new WebDriverWait(driver, WAIT_TIMEOUT)
-                .until(ExpectedConditions.elementToBeClickable(loginButton));
-        loginButton.click();
-        logger.info("Click Login button");
     }
 }
