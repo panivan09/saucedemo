@@ -1,5 +1,7 @@
 package saucedemo.utils;
 
+import com.epam.reportportal.listeners.LogLevel;
+import com.epam.reportportal.service.ReportPortal;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.OutputType;
@@ -15,6 +17,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class TestListener implements ITestListener {
 
@@ -42,6 +45,13 @@ public class TestListener implements ITestListener {
 
             File src = ((TakesScreenshot) DriverManager.getDriver()).getScreenshotAs(OutputType.FILE);
             Files.copy(src.toPath(), targetFile, StandardCopyOption.REPLACE_EXISTING);
+
+            ReportPortal.emitLog(
+                    "Screenshot on failure: " + testName,
+                    LogLevel.ERROR.name(),
+                    new Date(),
+                    targetFile.toFile()
+            );
 
             logger.error("TEST FAILED: {} | Screenshot saved: {}", testName, targetFile.toAbsolutePath());
 

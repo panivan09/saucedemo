@@ -63,4 +63,22 @@ public class LoginTest extends BaseTest {
                 {UserCreator.lockedOutUser(), "Epic sadface: Sorry, this user has been locked out."}
         };
     }
+
+    @Test(groups = "regression", description = "Should be failure")
+    public void shouldBeFailure(){
+        // Given
+        String username = "Should be failure";
+        String password = "Should be failure";
+        String expected = "Products";
+
+        // When
+        loginPage.openPage();
+        loginPage.typeUsername(username);
+        loginPage.typePassword(password);
+        ProductPage productPage = loginPage.successfulLogin();
+
+        // Then
+        Assert.assertEquals(productPage.getPageTitleName(), expected,
+                "Product page wasn't opened. Current URL: " + driver.getCurrentUrl());
+    }
 }

@@ -16,6 +16,7 @@
         <testng.version>7.10.2</testng.version>
         <webdrivermanager.version>5.9.2</webdrivermanager.version>
         <log4j2.version>2.24.3</log4j2.version>
+        <reportportal.agent.version>5.6.5</reportportal.agent.version>
     </properties>
 
     <dependencies>
@@ -48,6 +49,13 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>${log4j2.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.epam.reportportal</groupId>
+            <artifactId>agent-java-testng</artifactId>
+            <version>${reportportal.agent.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
